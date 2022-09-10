@@ -1,7 +1,9 @@
 import axios from 'axios'
 
+import type { countries } from '../constants/countries'
+
 interface Country {
-  readonly country_id: string
+  readonly country_id: keyof typeof countries
   readonly probability: number
 }
 

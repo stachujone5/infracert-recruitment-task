@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 
+import { countries } from '../constants/countries'
 import { fetchGender } from '../helpers/fetchGender'
 import { fetchNations } from '../helpers/fetchNations'
 import { getStorage } from '../helpers/handleStorage'
@@ -28,9 +29,15 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
   const handleCopy = () => {
     if (!inputRef.current || !inputRef.current.value) return
 
+    // filtering in case of an empty country_id for some names e.g "Szymon"
     const possibleCountries = personInfo?.nations.length
       ? personInfo.nations
-          .map(nation => `${nation.country_id}, probability: ${(nation.probability * 100).toFixed()}%`)
+          .map(
+            nation =>
+              nation.country_id &&
+              `${countries[nation.country_id]} - probability ${Math.round(nation.probability * 100)}%`
+          )
+          .filter(val => val)
           .join(', ')
       : 'not found'
 
@@ -39,8 +46,7 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
     const genderProbability = personInfo?.gender ? `${personInfo.genderProbability * 100}%` : 'not found'
 
     void navigator.clipboard.writeText(
-      `name: ${inputRef.current.value}, possible countries: ${possibleCountries}, gender: ${gender}
-      , gender probability: ${genderProbability}`
+      `name: ${inputRef.current.value}, possible countries: ${possibleCountries}, gender: ${gender}, gender probability: ${genderProbability}`
     )
     setTooltipText('Copied!')
     setShowTooltip()
@@ -61,7 +67,7 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
 
     const checkedNames = getStorage<readonly string[]>('names')
 
-    if (checkedNames?.includes(value)) {
+    if (checkedNames?.includes(value.toLowerCase())) {
       setTooltipText('This name was already checked!')
       setShowTooltip()
       return
@@ -69,8 +75,8 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
 
     setIsFormDisabled(true)
     checkedNames
-      ? localStorage.setItem('names', JSON.stringify([...checkedNames, value]))
-      : localStorage.setItem('names', JSON.stringify([value]))
+      ? localStorage.setItem('names', JSON.stringify([...checkedNames, value.toLowerCase()]))
+      : localStorage.setItem('names', JSON.stringify([value.toLowerCase()]))
 
     try {
       const [gender, nations] = await Promise.all([fetchGender(value), fetchNations(value)])
