@@ -16,6 +16,6 @@ export const fetchNations = async (name: string) => {
 
     return data.country
   } catch (err) {
-    throw new Error('Failed to fetch nation!')
+    throw new Error('Failed to fetch nations!')
   }
 }

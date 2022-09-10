@@ -17,7 +17,7 @@ export const Dashboard = ({ personInfo }: Props) => {
           <div className='stat-title text-center text-xl'>Nationality</div>
           {nations.map(
             (nation, i) =>
-              // Api returns empty country for some names e.g. "Szymon"
+              // Api returns empty country_id for some names e.g. "Szymon"
               nation.country_id && (
                 <Fragment key={`${Math.random() * i}`}>
                   <div className='stat-value text-primary'>

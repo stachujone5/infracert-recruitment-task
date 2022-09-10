@@ -6,6 +6,8 @@ export const useCooldown = (ms = 1000) => {
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
 
   const setCooldown = () => {
+    if (isCooldown) return
+
     setIsCooldown(true)
     timeoutRef.current = setTimeout(() => setIsCooldown(false), ms)
   }

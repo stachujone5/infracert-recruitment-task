@@ -11,12 +11,13 @@ import type { PersonInfo } from '../App'
 import type { FormEvent, Dispatch, SetStateAction } from 'react'
 
 interface Props {
+  readonly personInfo: PersonInfo | null
   readonly setPersonInfo: Dispatch<SetStateAction<PersonInfo | null>>
 }
 
 const REGEXP = new RegExp('^[a-zA-Z_ ]*$')
 
-export const Form = ({ setPersonInfo }: Props) => {
+export const Form = ({ personInfo, setPersonInfo }: Props) => {
   const [tooltipText, setTooltipText] = useState<string | null>(null)
   const [isFormDisabled, setIsFormDisabled] = useState(false)
 
@@ -25,9 +26,22 @@ export const Form = ({ setPersonInfo }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleCopy = () => {
-    if (!inputRef.current || !inputRef.current.value || showTooltip) return
+    if (!inputRef.current || !inputRef.current.value) return
 
-    void navigator.clipboard.writeText(inputRef.current.value)
+    const possibleCountries = personInfo?.nations.length
+      ? personInfo.nations
+          .map(nation => `${nation.country_id}, probability: ${(nation.probability * 100).toFixed()}%`)
+          .join(', ')
+      : 'not found'
+
+    const gender = personInfo?.gender ?? 'not found'
+
+    const genderProbability = personInfo?.gender ? `${personInfo.genderProbability * 100}%` : 'not found'
+
+    void navigator.clipboard.writeText(
+      `name: ${inputRef.current.value}, possible countries: ${possibleCountries}, gender: ${gender}
+      , gender probability: ${genderProbability}`
+    )
     setTooltipText('Copied!')
     setShowTooltip()
   }

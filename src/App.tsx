@@ -6,6 +6,17 @@ import { Form } from './components/Form'
 import type { Gender } from './helpers/fetchGender'
 import type { Nations } from './helpers/fetchNations'
 
+/* 
+
+External libraries used { 
+
+  Axios: Network error handling (res.ok), parsing JSON,
+  Tailwind & DaisyUI: Styling
+
+}
+
+*/
+
 export interface PersonInfo {
   readonly gender: Gender['gender']
   readonly genderProbability: Gender['probability']
@@ -17,7 +28,7 @@ export const App = () => {
 
   return (
     <div className='w-full'>
-      <Form setPersonInfo={setPersonInfo} />
+      <Form setPersonInfo={setPersonInfo} personInfo={personInfo} />
       {personInfo && <Dashboard personInfo={personInfo} />}
     </div>
   )
