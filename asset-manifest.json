@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/infracert-recruitment-task/static/css/main.24df304c.css",
-    "main.js": "/infracert-recruitment-task/static/js/main.076bc66c.js",
+    "main.css": "/infracert-recruitment-task/static/css/main.e146e34f.css",
+    "main.js": "/infracert-recruitment-task/static/js/main.608aff16.js",
     "index.html": "/infracert-recruitment-task/index.html",
-    "main.24df304c.css.map": "/infracert-recruitment-task/static/css/main.24df304c.css.map",
-    "main.076bc66c.js.map": "/infracert-recruitment-task/static/js/main.076bc66c.js.map"
+    "main.e146e34f.css.map": "/infracert-recruitment-task/static/css/main.e146e34f.css.map",
+    "main.608aff16.js.map": "/infracert-recruitment-task/static/js/main.608aff16.js.map"
   },
   "entrypoints": [
-    "static/css/main.24df304c.css",
-    "static/js/main.076bc66c.js"
+    "static/css/main.e146e34f.css",
+    "static/js/main.608aff16.js"
   ]
 }
