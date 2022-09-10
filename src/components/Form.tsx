@@ -76,12 +76,13 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
     }
 
     setIsFormDisabled(true)
-    checkedNames
-      ? localStorage.setItem('names', JSON.stringify([...checkedNames, value.toLowerCase()]))
-      : localStorage.setItem('names', JSON.stringify([value.toLowerCase()]))
 
     try {
       const [gender, nations] = await Promise.all([fetchGender(value), fetchNations(value)])
+
+      checkedNames
+        ? localStorage.setItem('names', JSON.stringify([...checkedNames, value.toLowerCase()]))
+        : localStorage.setItem('names', JSON.stringify([value.toLowerCase()]))
 
       setPersonInfo({ ...gender, nations })
       setTooltipText(null)
