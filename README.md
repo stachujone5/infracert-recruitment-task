@@ -1,6 +1,8 @@
 Infracert recruitment Task
 
-App predicts your potential gender and nationality based on your name 
+App predicts your potential gender and nationality based on your name
+
+## [Live demo](http://stachujone5.github.io/infracert-recruitment-task)
 
 Built using:
 * React 
