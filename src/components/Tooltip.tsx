@@ -4,5 +4,10 @@ interface Props {
 }
 
 export const Tooltip = ({ children, variant = 'error' }: Props) => {
-  return <div className={`tooltip tooltip-${variant} tooltip-bottom tooltip-open`} data-tip={children} />
+  return (
+    <div
+      className={`tooltip ${variant === 'error' ? 'tooltip-error' : 'tooltip-success'} tooltip-bottom tooltip-open`}
+      data-tip={children}
+    />
+  )
 }
