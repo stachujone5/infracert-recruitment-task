@@ -1,12 +1,21 @@
+import { useState } from 'react'
+
+import { Dashboard } from './components/Dashboard'
+import { Form } from './components/Form'
+
+import type { Gender } from './helpers/fetchGender'
+import type { Nation } from './helpers/fetchNation'
+
 export const App = () => {
+  const [error, setError] = useState<string | null>(null)
+  const [nation, setNation] = useState<Nation | null>(null)
+  const [gender, setGender] = useState<Gender | null>(null)
+
   return (
-    <div className='form-control w-full max-w-md'>
-      <form className=''>
-        <label className='label'>
-          <span className='label-text'>What is your name?</span>
-        </label>
-        <input type='text' placeholder='Type here' className='input input-bordered w-full max-w-xs' />
-      </form>
+    <div className='w-full'>
+      <Form setError={setError} setNation={setNation} setGender={setGender} />
+      {error}
+      <Dashboard gender={gender} nation={nation} />
     </div>
   )
 }
