@@ -43,10 +43,12 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
 
     const gender = personInfo?.gender ?? 'not found'
 
-    const genderProbability = personInfo?.gender ? `${personInfo.genderProbability * 100}%` : 'not found'
+    const genderProbability = personInfo?.gender ? `${Math.round(personInfo.genderProbability * 100)}%` : 'not found'
 
     void navigator.clipboard.writeText(
-      `name: ${inputRef.current.value}, possible countries: ${possibleCountries}, gender: ${gender}, gender probability: ${genderProbability}`
+      `name: ${
+        personInfo?.name ?? 'not found'
+      }, possible countries: ${possibleCountries}, gender: ${gender}, gender probability: ${genderProbability}`
     )
     setTooltipText('Copied!')
     setShowTooltip()

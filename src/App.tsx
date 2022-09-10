@@ -20,6 +20,7 @@ External libraries used {
 export interface PersonInfo {
   readonly gender: Gender['gender']
   readonly genderProbability: Gender['probability']
+  readonly name: string
   readonly nations: Nations['country']
 }
 
