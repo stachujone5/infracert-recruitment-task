@@ -5,16 +5,16 @@ interface Country {
   readonly probability: number
 }
 
-export interface Nation {
+export interface Nations {
   readonly country: readonly Country[]
   readonly name: string
 }
 
-export const fetchNation = async (name: string) => {
+export const fetchNations = async (name: string) => {
   try {
-    const { data } = await axios.get<Nation>(`https://api.nationalize.io?name=${name}`)
+    const { data } = await axios.get<Nations>(`https://api.nationalize.io?name=${name}`)
 
-    return data
+    return data.country
   } catch (err) {
     throw new Error('Failed to fetch nation!')
   }

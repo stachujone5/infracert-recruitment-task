@@ -1,51 +1,76 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { fetchGender } from '../helpers/fetchGender'
-import { fetchNation } from '../helpers/fetchNation'
+import { fetchNations } from '../helpers/fetchNations'
+import { getStorage } from '../helpers/handleStorage'
+import { useCooldown } from '../hooks/useCooldown'
 
-import type { Gender } from '../helpers/fetchGender'
-import type { Nation } from '../helpers/fetchNation'
+import { Tooltip } from './Tooltip'
+
+import type { PersonInfo } from '../App'
 import type { FormEvent, Dispatch, SetStateAction } from 'react'
 
 interface Props {
-  readonly setError: Dispatch<SetStateAction<string | null>>
-  readonly setGender: Dispatch<SetStateAction<Gender | null>>
-  readonly setNation: Dispatch<SetStateAction<Nation | null>>
+  readonly setPersonInfo: Dispatch<SetStateAction<PersonInfo | null>>
 }
 
-export const Form = ({ setError, setGender, setNation }: Props) => {
-  const [showTooltip, setShowTooltip] = useState(false)
+const REGEXP = new RegExp('^[a-zA-Z_ ]*$')
+
+export const Form = ({ setPersonInfo }: Props) => {
+  const [tooltipText, setTooltipText] = useState<string | null>(null)
+  const [isFormDisabled, setIsFormDisabled] = useState(false)
+
+  const [showTooltip, setShowTooltip] = useCooldown()
 
   const inputRef = useRef<HTMLInputElement>(null)
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>()
 
   const handleCopy = () => {
     if (!inputRef.current || !inputRef.current.value || showTooltip) return
 
     void navigator.clipboard.writeText(inputRef.current.value)
-    setShowTooltip(true)
-    timeoutRef.current = setTimeout(() => setShowTooltip(false), 1500)
+    setTooltipText('Copied!')
+    setShowTooltip()
   }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    if (!inputRef.current || !inputRef.current.value) return
+    const value = inputRef.current?.value
+
+    if (!value) return
+
+    if (!REGEXP.test(value)) {
+      setTooltipText('Invalid character!')
+      setShowTooltip()
+      return
+    }
+
+    const checkedNames = getStorage<readonly string[]>('names')
+
+    if (checkedNames?.includes(value)) {
+      setTooltipText('This name was already checked!')
+      setShowTooltip()
+      return
+    }
+
+    setIsFormDisabled(true)
+    checkedNames
+      ? localStorage.setItem('names', JSON.stringify([...checkedNames, value]))
+      : localStorage.setItem('names', JSON.stringify([value]))
 
     try {
-      const gender = await fetchGender(inputRef.current.value)
-      const nation = await fetchNation(inputRef.current.value)
+      const [gender, nations] = await Promise.all([fetchGender(value), fetchNations(value)])
 
-      setGender(gender)
-      setNation(nation)
+      setPersonInfo({ ...gender, nations })
+      setTooltipText(null)
+      setIsFormDisabled(false)
     } catch (err) {
-      typeof err === 'string' && setError(err)
+      setTooltipText('Something went wrong!')
+      setShowTooltip()
+      setPersonInfo(null)
+      setIsFormDisabled(false)
     }
   }
-
-  useEffect(() => {
-    return () => clearTimeout(timeoutRef.current)
-  }, [])
 
   return (
     <div className='form-control w-full max-w-md mx-auto mt-20'>
@@ -59,11 +84,13 @@ export const Form = ({ setError, setGender, setNation }: Props) => {
             Copy
           </button>
         </div>
-        <button className='my-2 btn btn-outline btn-block' type='submit'>
+        <button className='my-2 btn btn-outline btn-block' type='submit' disabled={isFormDisabled}>
           Guess
         </button>
       </form>
-      {showTooltip && <div className='tooltip tooltip-success tooltip-bottom tooltip-open' data-tip='Copied!' />}
+      {showTooltip && tooltipText && (
+        <Tooltip variant={tooltipText === 'Copied!' ? 'success' : 'error'}>{tooltipText}</Tooltip>
+      )}
     </div>
   )
 }
