@@ -2,10 +2,10 @@ import axios from 'axios'
 
 import { isApiError } from './typeguards'
 
-import type { countries } from '../constants/countries'
+import type { COUNTRIES } from '../constants/countries'
 
 interface Country {
-  readonly country_id: keyof typeof countries
+  readonly country_id: keyof typeof COUNTRIES
   readonly probability: number
 }
 

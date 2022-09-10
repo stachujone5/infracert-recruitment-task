@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 
-import { countries } from '../constants/countries'
+import { COUNTRIES } from '../constants/countries'
 import { fetchGender } from '../helpers/fetchGender'
 import { fetchNations } from '../helpers/fetchNations'
 import { getStorage } from '../helpers/handleStorage'
@@ -26,8 +26,18 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
 
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const handleTooltip = (text: string) => {
+    if (!showTooltip) {
+      setShowTooltip()
+      setTooltipText(text)
+    }
+  }
+
   const handleCopy = () => {
-    if (!inputRef.current || !inputRef.current.value) return
+    if (!personInfo) {
+      handleTooltip('Nothing to copy!')
+      return
+    }
 
     // filtering in case of an empty country_id for some names e.g "Szymon"
     const possibleCountries = personInfo?.nations.length
@@ -35,7 +45,7 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
           .map(
             nation =>
               nation.country_id &&
-              `${countries[nation.country_id]} - probability ${Math.round(nation.probability * 100)}%`
+              `${COUNTRIES[nation.country_id]} - probability ${Math.round(nation.probability * 100)}%`
           )
           .filter(val => val)
           .join(', ')
@@ -50,8 +60,7 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
         personInfo?.name ?? 'not found'
       }, possible countries: ${possibleCountries}, gender: ${gender}, gender probability: ${genderProbability}`
     )
-    setTooltipText('Copied!')
-    setShowTooltip()
+    handleTooltip('Copied!')
   }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -59,19 +68,20 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
 
     const value = inputRef.current?.value
 
-    if (!value) return
+    if (!value) {
+      handleTooltip('Enter name!')
+      return
+    }
 
     if (!REGEXP.test(value)) {
-      setTooltipText('Invalid character!')
-      setShowTooltip()
+      handleTooltip('Invalid character!')
       return
     }
 
     const checkedNames = getStorage<readonly string[]>('names')
 
     if (checkedNames?.includes(value.toLowerCase())) {
-      setTooltipText('This name was already checked!')
-      setShowTooltip()
+      handleTooltip('This name was already checked!')
       return
     }
 
@@ -88,8 +98,7 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
       setTooltipText(null)
       setIsFormDisabled(false)
     } catch (err) {
-      setTooltipText('Something went wrong!')
-      setShowTooltip()
+      handleTooltip('Something went wrong!')
       setPersonInfo(null)
       setIsFormDisabled(false)
     }

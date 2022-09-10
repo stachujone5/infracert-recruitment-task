@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 
-import { countries } from '../constants/countries'
+import { COUNTRIES } from '../constants/countries'
 
 import type { PersonInfo } from '../App'
 
@@ -23,7 +23,7 @@ export const Dashboard = ({ personInfo }: Props) => {
               nation.country_id && (
                 <Fragment key={`${Math.random() * i}`}>
                   <div className='stat-value text-primary-focus'>
-                    #{i + 1} {countries[nation.country_id]}
+                    #{i + 1} {COUNTRIES[nation.country_id]}
                   </div>
                   <div className='stat-desc my-2'>Probability {Math.round(Number(nation.probability) * 100)}%</div>
                 </Fragment>
