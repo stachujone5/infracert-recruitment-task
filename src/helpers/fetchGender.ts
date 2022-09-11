@@ -15,8 +15,15 @@ export const fetchGender = async (name: string) => {
 
     return { gender: data.gender, genderProbability: data.probability, name: data.name }
   } catch (err) {
-    if (axios.isAxiosError(err) && err.response && isApiError<{ readonly error: string }>(err.response.data)) {
-      throw new Error(err.response.data.error)
+    if (axios.isAxiosError(err)) {
+      if (err.response && isApiError(err.response.data)) {
+        const { error } = err.response.data
+
+        throw new Error(error)
+      }
+      if (err.request) {
+        throw new Error('Failed to fetch gender, no response received!')
+      }
     }
     throw new Error('Failed to fetch gender!')
   }

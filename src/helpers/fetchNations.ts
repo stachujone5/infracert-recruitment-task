@@ -20,8 +20,15 @@ export const fetchNations = async (name: string) => {
 
     return data.country
   } catch (err) {
-    if (axios.isAxiosError(err) && err.response && isApiError<{ readonly error: string }>(err.response.data)) {
-      throw new Error(err.response.data.error)
+    if (axios.isAxiosError(err)) {
+      if (err.response && isApiError(err.response.data)) {
+        const { error } = err.response.data
+
+        throw new Error(error)
+      }
+      if (err.request) {
+        throw new Error('Failed to fetch nations, no response received!')
+      }
     }
     throw new Error('Failed to fetch nations!')
   }

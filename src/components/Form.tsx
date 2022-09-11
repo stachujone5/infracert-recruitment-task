@@ -98,7 +98,7 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
       setTooltipText(null)
       setIsFormDisabled(false)
     } catch (err) {
-      handleTooltip('Something went wrong!')
+      err instanceof Error ? handleTooltip(err.message) : handleTooltip('Something went wrong!')
       setPersonInfo(null)
       setIsFormDisabled(false)
     }

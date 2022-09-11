@@ -1,4 +1,4 @@
-export const isApiError = <T>(error: unknown): error is T => {
+export const isApiError = (error: unknown): error is { readonly error: string } => {
   if (typeof error === 'object' && error) {
     return 'error' in error
   }
