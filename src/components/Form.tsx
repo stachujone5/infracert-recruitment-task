@@ -34,6 +34,14 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
   }
 
   const handleCopy = () => {
+    if (inputRef.current?.value && !personInfo) {
+      navigator.clipboard
+        .writeText(`name: ${inputRef.current.value}`)
+        .then(() => handleTooltip('Copied!'))
+        .catch(() => handleTooltip('Failed to copy!'))
+      return
+    }
+
     if (!personInfo) {
       handleTooltip('Nothing to copy!')
       return
@@ -55,12 +63,14 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
 
     const genderProbability = personInfo?.gender ? `${Math.round(personInfo.genderProbability * 100)}%` : 'not found'
 
-    void navigator.clipboard.writeText(
-      `name: ${
-        personInfo?.name ?? 'not found'
-      }, possible countries: ${possibleCountries}, gender: ${gender}, gender probability: ${genderProbability}`
-    )
-    handleTooltip('Copied!')
+    navigator.clipboard
+      .writeText(
+        `name: ${
+          personInfo?.name ?? 'not found'
+        }, possible countries: ${possibleCountries}, gender: ${gender}, gender probability: ${genderProbability}`
+      )
+      .then(() => handleTooltip('Copied!'))
+      .catch(() => handleTooltip('Failed to copy!'))
   }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

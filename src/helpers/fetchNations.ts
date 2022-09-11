@@ -16,7 +16,7 @@ export interface Nations {
 
 export const fetchNations = async (name: string) => {
   try {
-    const { data } = await axios.get<Nations>(`https://api.nationalize.io?name=${name}`)
+    const { data } = await axios.get<Nations>(`https://api.nationalize.io?name=${encodeURIComponent(name)}`)
 
     return data.country
   } catch (err) {

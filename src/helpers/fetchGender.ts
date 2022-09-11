@@ -11,7 +11,7 @@ export interface Gender {
 
 export const fetchGender = async (name: string) => {
   try {
-    const { data } = await axios.get<Gender>(`https://api.genderize.io?name=${name}`)
+    const { data } = await axios.get<Gender>(`https://api.genderize.io?name=${encodeURIComponent(name)}`)
 
     return { gender: data.gender, genderProbability: data.probability, name: data.name }
   } catch (err) {
