@@ -84,7 +84,7 @@ export const Form = ({ checkedNames, personInfo, setCheckedNames, setPersonInfo 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const value = inputRef.current?.value
+    const value = inputRef.current?.value.trim().toLowerCase()
 
     if (!value) {
       handleTooltip('Enter name!')
@@ -101,7 +101,7 @@ export const Form = ({ checkedNames, personInfo, setCheckedNames, setPersonInfo 
       return
     }
 
-    if (checkedNames?.find(user => user.name === value.toLowerCase())) {
+    if (checkedNames?.find(user => user.name === value)) {
       handleTooltip('This name was already checked!')
       return
     }
@@ -112,7 +112,7 @@ export const Form = ({ checkedNames, personInfo, setCheckedNames, setPersonInfo 
       const [gender, nations] = await Promise.all([fetchGender(value), fetchNations(value)])
 
       const LsName = {
-        name: value.toLowerCase(),
+        name: value,
         gender: gender.gender,
         country_id: nations.length ? nations[0].country_id : null
       }
