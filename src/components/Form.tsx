@@ -17,6 +17,7 @@ interface Props {
 }
 
 const REGEXP = new RegExp('^[a-zA-Z_ ]*$')
+const MAX_NAME_LENGTH = 30
 
 export const Form = ({ personInfo, setPersonInfo }: Props) => {
   const [tooltipText, setTooltipText] = useState<string | null>(null)
@@ -85,6 +86,11 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
 
     if (!REGEXP.test(value)) {
       handleTooltip('Invalid character!')
+      return
+    }
+
+    if (value.length > MAX_NAME_LENGTH) {
+      handleTooltip('Name is too long!')
       return
     }
 
