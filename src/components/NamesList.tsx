@@ -13,7 +13,7 @@ export const NamesList = ({ checkedNames, setCheckedNames }: Props) => {
     <>
       <div className='collapse collapse-arrow mt-10 w-full max-w-md mx-auto outline outline-1 rounded-xl'>
         <input type='checkbox' />
-        <div className='collapse-title text-xl font-medium text-center'>Show already checked names</div>
+        <div className='collapse-title text-xl font-medium text-center'>Checked names</div>
         <ul className='collapse-content'>
           {checkedNames.map(name => (
             <li className='text-primary-focus border-b-2 border-white/10' key={name.name}>
