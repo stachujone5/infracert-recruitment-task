@@ -3,7 +3,6 @@ import { useRef, useState } from 'react'
 import { COUNTRIES } from '../constants/countries'
 import { fetchGender } from '../helpers/fetchGender'
 import { fetchNations } from '../helpers/fetchNations'
-import { getStorage } from '../helpers/handleStorage'
 import { useCooldown } from '../hooks/useCooldown'
 
 import { Tooltip } from './Tooltip'
@@ -11,15 +10,23 @@ import { Tooltip } from './Tooltip'
 import type { PersonInfo } from '../App'
 import type { FormEvent, Dispatch, SetStateAction } from 'react'
 
+export interface LsName {
+  readonly country_id: keyof typeof COUNTRIES | null
+  readonly gender: 'male' | 'female' | null
+  readonly name: string
+}
+
 interface Props {
+  readonly checkedNames: readonly LsName[] | null
   readonly personInfo: PersonInfo | null
+  readonly setCheckedNames: Dispatch<SetStateAction<readonly LsName[] | null>>
   readonly setPersonInfo: Dispatch<SetStateAction<PersonInfo | null>>
 }
 
 const REGEXP = new RegExp('^[a-zA-Z_ ]*$')
 const MAX_NAME_LENGTH = 30
 
-export const Form = ({ personInfo, setPersonInfo }: Props) => {
+export const Form = ({ checkedNames, personInfo, setCheckedNames, setPersonInfo }: Props) => {
   const [tooltipText, setTooltipText] = useState<string | null>(null)
   const [isFormDisabled, setIsFormDisabled] = useState(false)
 
@@ -94,9 +101,7 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
       return
     }
 
-    const checkedNames = getStorage<readonly string[]>('names')
-
-    if (checkedNames?.includes(value.toLowerCase())) {
+    if (checkedNames?.find(user => user.name === value.toLowerCase())) {
       handleTooltip('This name was already checked!')
       return
     }
@@ -106,9 +111,17 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
     try {
       const [gender, nations] = await Promise.all([fetchGender(value), fetchNations(value)])
 
+      const LsName = {
+        name: value.toLowerCase(),
+        gender: gender.gender,
+        country_id: nations.length ? nations[0].country_id : null
+      }
+
       checkedNames
-        ? localStorage.setItem('names', JSON.stringify([...checkedNames, value.toLowerCase()]))
-        : localStorage.setItem('names', JSON.stringify([value.toLowerCase()]))
+        ? localStorage.setItem('names', JSON.stringify([...checkedNames, LsName]))
+        : localStorage.setItem('names', JSON.stringify([LsName]))
+
+      setCheckedNames(prev => (prev ? [...prev, LsName] : [LsName]))
 
       setPersonInfo({ ...gender, nations })
       setTooltipText(null)
@@ -128,11 +141,11 @@ export const Form = ({ personInfo, setPersonInfo }: Props) => {
         </label>
         <div className='flex'>
           <input type='text' id='name' placeholder='Name' className='input input-bordered w-full' ref={inputRef} />
-          <button type='button' className='ml-2 btn btn-outline' onClick={handleCopy}>
+          <button type='button' className='ml-2 btn btn-primary' onClick={handleCopy}>
             Copy
           </button>
         </div>
-        <button className='my-2 btn btn-outline btn-block' type='submit' disabled={isFormDisabled}>
+        <button className='my-2 btn btn-primary btn-block' type='submit' disabled={isFormDisabled}>
           Guess
         </button>
       </form>
