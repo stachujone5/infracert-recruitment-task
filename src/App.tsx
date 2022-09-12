@@ -10,7 +10,7 @@ import type { Nations } from './helpers/fetchNations'
 
 External libraries used { 
 
-  Axios: Network error handling (res.ok), parsing JSON,
+  Axios: Fetching, network error handling (res.ok), parsing JSON,
   Tailwind & DaisyUI: Styling
 
 }
